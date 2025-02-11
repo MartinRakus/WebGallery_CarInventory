@@ -18,7 +18,7 @@
                         <input v-model="car.name" type="text" id="name" class="form-control" required>
                     </div>
                     <div class="mb-3 form-check">
-                        <input v-model="car.is_registered" type="checkbox" id="is_registered" class="form-check-input">
+                        <input v-model="car.is_registered" :checked="car.is_registered" type="checkbox" id="is_registered" class="form-check-input">
                         <label for="is_registered" class="form-check-label">Je registrované?</label>
                     </div>
                     <div class="mb-3" v-if="car.is_registered">
@@ -145,17 +145,16 @@
                 if (this.isEditingCar === car) {
                     this.resetCarForm();
                 } else {
-                    this.car = { ...car };
+                    this.car = { ...car, is_registered: Boolean(car.is_registered) };
                     this.isEditingCar = car;
                     this.showCarForm = true;
                 }
             },
-            removeCar(car) {
-                if (confirm(`Are you sure you want to delete ${car.name}?`)) {
-                    axios.delete(`/cars/${car.id}`)
+            removeCar(val) {
+                if (confirm(`Are you sure you want to delete ${val.name}?`)) {
+                    axios.delete(`/cars/${val.id}`)
                         .then(() => {
-                            id = car.id;
-                            this.cars = this.cars.filter(car => car.id !== id);
+                            this.fetchCars();
                         })
                         .catch(error => {
                             console.error(error);
@@ -190,12 +189,11 @@
                     this.showPartForm = true;
                 }
             },
-            removePart(part) {
-                if (confirm(`Are you sure you want to delete ${part.name}?`)) {
-                    axios.delete(`/parts/${part.id}`)
+            removePart(val) {
+                if (confirm(`Are you sure you want to delete ${val.name}?`)) {
+                    axios.delete(`/parts/${val.id}`)
                         .then(() => {
-                            id = part.id;
-                            this.parts = this.parts.filter(car => part.id !== id);
+                            this.fetchParts();
                         })
                         .catch(error => {
                             console.error(error);
