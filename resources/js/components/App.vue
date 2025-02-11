@@ -5,77 +5,90 @@
         <!-- Cars and Parts Lists -->
         <div class="mt-5">
             <div class="mb-2 d-flex justify-content-between align-items-center">
-                <h2 class="mb-0">Available Cars</h2>
-                <button class="btn btn-primary" @click.stop="showCarForm = !showCarForm">Add new</button>
+                <h2 class="mb-0">Dostupné vozidlá</h2>
+                <button class="btn btn-primary" @click.stop="showCarForm || isEditingCar !== null ? resetCarForm() : showCarForm = true">{{showCarForm || isEditingCar !== null ? 'Zatvoriť' : 'Pridať'}}</button>
             </div>
 
             <!-- CARS -->
-            <div class="card p-4" v-if="showCarForm">
-                <h3>Add Car</h3>
+            <div class="card p-4" v-if="showCarForm || isEditingCar !== null">
+                <h3>{{ isEditingCar !== null ? 'Upraviť vozidlo' : 'Pridať vozidlo' }}</h3>
                 <form @submit.prevent="submitCarForm">
                     <div class="mb-3">
-                        <label for="name" class="form-label">Car Name</label>
+                        <label for="name" class="form-label">Názov vozidla</label>
                         <input v-model="car.name" type="text" id="name" class="form-control" required>
                     </div>
                     <div class="mb-3 form-check">
                         <input v-model="car.is_registered" type="checkbox" id="is_registered" class="form-check-input">
-                        <label for="is_registered" class="form-check-label">Is Registered</label>
+                        <label for="is_registered" class="form-check-label">Je registrované?</label>
                     </div>
                     <div class="mb-3" v-if="car.is_registered">
-                        <label for="registration_number" class="form-label">Registration Number</label>
+                        <label for="registration_number" class="form-label">Registračné číslo</label>
                         <input v-model="car.registration_number" type="text" id="registration_number" class="form-control">
                     </div>
-                    <button type="submit" class="btn btn-success">Create Car</button>
+                    <button type="submit" class="btn btn-success">Pridať vozidlo</button>
                 </form>
             </div>
 
             <ul class="list-group mb-4" @click.stop>
                 <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
-                    <span>Name</span>
-                    <span>Registered</span>
+                    <span>Názov</span>
+                    <span>Registračné číslo</span>
                 </li>
-                <li v-for="car in cars" :key="car.id" class="list-group-item d-flex justify-content-between align-items-center">
+                <li v-if="cars.length" v-for="car in cars" :key="car.id" class="list-group-item d-flex justify-content-between align-items-center selectable" :class="{ 'bg-secondary text-white': selectedCars.includes(car.id) }" @click="selectCar(car)">
                     <span>{{ car.name }}</span>
-                    <span v-if="car.registration_number && car.is_registered" class="badge bg-success">{{ car.registration_number }}</span>
-                    <span v-else class="badge bg-danger">Not Registered</span>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span v-if="car.registration_number && car.is_registered" class="badge bg-success">{{ car.registration_number }}</span>
+                        <span v-else class="badge bg-danger">Neregistrované</span>
+                        <i class="fa fa fa-pencil-square-o btn btn-success ml-5 mr-2" @click.stop="editCar(car)"></i>
+                        <i class="fa fa-times btn btn-danger" @click.stop="removeCar(car)"></i>
+                    </div>
+                </li>
+                <li v-if="!cars.length" class="list-group-item d-flex justify-content-center align-items-center">
+                    <span class="text-danger">Žiadne vozidlá neboli nájdené</span>
                 </li>
             </ul>
 
             <!-- PARTS -->
             <div class="mb-2 d-flex justify-content-between align-items-center">
-                <h2 class="mb-0">Available Parts</h2>
-                <button class="btn btn-primary" @click.stop="showPartForm = !showPartForm">Add new</button>
+                <h2 class="mb-0">Dostupné diely</h2>
+                <button class="btn btn-primary" @click.stop="showPartForm || isEditingPart !== null ? resetPartForm() : showPartForm = true">{{ showPartForm || isEditingPart !== null ? 'Zatvoriť' : 'Pridať' }}</button>
             </div>
 
             <!-- Add part form -->
-            <div class="card p-4" v-if="showPartForm">
-                <h3>Add Part</h3>
+            <div class="card p-4" v-if="showPartForm || isEditingPart !== null">
+                <h3>{{ isEditingPart !== null ? 'Upraviť diel' : 'Pridať diel' }}</h3>
                 <form @submit.prevent="submitPartForm">
                     <div class="mb-3">
-                        <label for="name" class="form-label">Part Name</label>
+                        <label for="name" class="form-label">Názov dielu</label>
                         <input v-model="part.name" type="text" id="name" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="serialnumber" class="form-label">Serial</label>
+                        <label for="serialnumber" class="form-label">Sériové číslo</label>
                         <input v-model="part.serialnumber" type="text" id="serialnumber" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="carID" class="form-label">Car ID</label>
+                        <label for="carID" class="form-label">ID vozidla</label>
                         <input v-model="part.car_id" type="text" id="carID" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-success">Create Part</button>
+                    <button type="submit" class="btn btn-success">Pridať diel</button>
                 </form>
             </div>
 
             <ul class="list-group mb-4">
                 <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
-                    <span>Name <span class="text-success">(ID)</span></span>
-                    <span>Assigned to car <span class="text-success">(ID)</span></span>
+                    <span>Názov <span class="text-success">(ID)</span></span>
+                    <span>Priradené k vozidlu <span class="text-success">(ID)</span></span>
                 </li>
-                <li v-for="part in parts" :key="part.id"
-                    class="list-group-item d-flex justify-content-between align-items-center">
+                <li v-if="filteredParts.length" v-for="part in filteredParts" :key="part.id" class="list-group-item d-flex justify-content-between align-items-center">
                     <span>{{ part.name }} <span class="text-success">({{ part.serialnumber }})</span></span>
-                    <span>{{ getCarName(part.car_id) }} <span class="text-success">({{ part.car_id }})</span></span>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>{{ getCarName(part.car_id) }} <span class="text-success">({{ part.car_id }})</span></span>
+                        <i class="fa fa fa-pencil-square-o btn btn-success ml-5 mr-2" @click.stop="editPart(part)"></i>
+                        <i class="fa fa-times btn btn-danger" @click.stop="removePart(part)"></i>
+                    </div>
+                </li>
+                <li v-if="!filteredParts.length" class="list-group-item d-flex justify-content-center align-items-center">
+                    <span class="text-danger">Žiadne diely neboli nájdené</span>
                 </li>
             </ul>
         </div>
@@ -86,7 +99,9 @@
         data() {
             return {
                 showCarForm: false,
+                isEditingCar: null,
                 showPartForm: false,
+                isEditingPart: null,
                 car: {
                     name: '',
                     registration_number: '',
@@ -99,7 +114,13 @@
                 },
                 cars: [],
                 parts: [],
+                selectedCars: [],
             };
+        },
+        computed: {
+            filteredParts() {
+                return this.selectedCars.length ? this.parts.filter(part => this.selectedCars.includes(part.car_id)) : this.parts;
+            }
         },
         methods: {
             fetchCars() {
@@ -120,12 +141,105 @@
                         console.error(error);
                     });
             },
-            submitCarForm() { },
-            submitPartForm() { },
+            editCar(car) {
+                if (this.isEditingCar === car) {
+                    this.resetCarForm();
+                } else {
+                    this.car = { ...car };
+                    this.isEditingCar = car;
+                    this.showCarForm = true;
+                }
+            },
+            removeCar(car) {
+                if (confirm(`Are you sure you want to delete ${car.name}?`)) {
+                    axios.delete(`/cars/${car.id}`)
+                        .then(() => {
+                            id = car.id;
+                            this.cars = this.cars.filter(car => car.id !== id);
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                }
+            },
+            openCarForm() {
+                this.resetCarForm();
+                this.showCarForm = true;
+            },
+            resetCarForm() {
+                this.car = { id: null, name: '', registration_number: '', is_registered: false };
+                this.isEditingCar = null;
+                this.showCarForm = false;
+            },
+            submitCarForm() {
+                axios.post('/cars', this.car)
+                    .then(response => {
+                        this.cars.push(response.data);
+                        this.car = { name: '', registration_number: '', is_registered: false };
+                        this.showCarForm = false;
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            },
+            editPart(part) {
+                if (this.isEditingPart === part) {
+                    this.resetPartForm();
+                } else {
+                    this.part = { ...part };
+                    this.isEditingPart = part;
+                    this.showPartForm = true;
+                }
+            },
+            removePart(part) {
+                if (confirm(`Are you sure you want to delete ${part.name}?`)) {
+                    axios.delete(`/parts/${part.id}`)
+                        .then(() => {
+                            id = part.id;
+                            this.parts = this.parts.filter(car => part.id !== id);
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                }
+            },
+            openPartForm() {
+                this.resetPartForm();
+                this.showPartForm = true;
+            },
+            resetPartForm() {
+                this.part = { name: '', serialnumber: '', car_id: null };
+                this.isEditingPart = null;
+                this.showPartForm = false;
+            },
+            submitPartForm() {
+                axios.post('/parts', this.part)
+                    .then(response => {
+                        this.parts.push(response.data);
+                        this.part = { name: '', serialnumber: '', car_id: null };
+                        this.showPartForm = false;
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            },
             getCarName(carId) {
                 const car = this.cars.find(c => c.id === carId);
                 return car ? car.name : 'Unknown Car';
             },
+            selectCar(car) {
+                const index = this.selectedCars.indexOf(car.id);
+                if (index === -1) {
+                    this.selectedCars.push(car.id);
+                } else {
+                    this.selectedCars.splice(index, 1);
+                }
+            },
+            clearSelection() {
+                this.resetCarForm();
+                this.resetPartForm();
+                this.selectedCars = [];
+            }
         },
         mounted() {
             this.fetchCars();
@@ -133,3 +247,11 @@
         }
     };
 </script>
+<style>
+  @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
+</style>
+<style scoped>
+    .selectable {
+        cursor: pointer;
+    }
+</style>
