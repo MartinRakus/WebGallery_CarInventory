@@ -11,9 +11,24 @@ class CarController extends Controller {
         return response()->json(Car::with('parts')->get());
     }
 
-    // Store new Car
+    // Store new or edit existing Car
     public function store(Request $request) {
-        $validated = $request->validate(['name' => 'required|string|max:255', 'registration_number' => 'nullable|required_if:is_registered,true|string|unique:cars,registration_number|max:255', 'is_registered' => 'boolean']);
-        return Car::create($validated);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'registration_number' => 'nullable|required_if:is_registered,true|string|max:255|unique:cars,registration_number,' . $request['id'],
+            'is_registered' => 'boolean'
+        ]);
+        $car = Car::where('id', $request['id'])->first();
+
+        if ($car) {
+            return $car->update($validated);
+        } else {
+            return Car::create($validated);
+        }
+    }
+
+    // Remove Car
+    public function destroy(string $id) {
+        return Car::where('id', $id)->delete();
     }
 }

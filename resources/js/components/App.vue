@@ -25,7 +25,7 @@
                         <label for="registration_number" class="form-label">Registračné číslo</label>
                         <input v-model="car.registration_number" type="text" id="registration_number" class="form-control">
                     </div>
-                    <button type="submit" class="btn btn-success">Pridať vozidlo</button>
+                    <button type="submit" class="btn btn-success">{{ isEditingCar !== null ? 'Upraviť vozidlo' : 'Pridať vozidlo' }}</button>
                 </form>
             </div>
 
@@ -70,13 +70,13 @@
                         <label for="carID" class="form-label">ID vozidla</label>
                         <input v-model="part.car_id" type="text" id="carID" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-success">Pridať diel</button>
+                    <button type="submit" class="btn btn-success">{{ isEditingPart !== null ? 'Upraviť diel' : 'Pridať diel' }}</button>
                 </form>
             </div>
 
             <ul class="list-group mb-4">
                 <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
-                    <span>Názov <span class="text-success">(ID)</span></span>
+                    <span>Názov <span class="text-success">(Sériové číslo)</span></span>
                     <span>Priradené k vozidlu <span class="text-success">(ID)</span></span>
                 </li>
                 <li v-if="filteredParts.length" v-for="part in filteredParts" :key="part.id" class="list-group-item d-flex justify-content-between align-items-center">

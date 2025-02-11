@@ -11,9 +11,24 @@ class PartController extends Controller {
         return response()->json(Part::with('car')->get());
     }
 
-    // Store new Parts
+    // Store new or edit existing Parts
     public function store(Request $request) {
-        $validated = $request->validate(['name' => 'required|string|max:255', 'serialnumber' => 'required|string|unique:parts,serialnumber|max:255', 'car_id' => 'required|exists:cars,id']);
-        return Part::create($validated);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'serialnumber' => 'required|string|unique:parts,serialnumber|max:255' . $request['id'],
+            'car_id' => 'required|exists:cars,id'
+        ]);
+        $part = Part::where('id', $request['id'])->first();
+
+        if ($part) {
+            return $part->update($validated);
+        } else {
+            return Part::create($validated);
+        }
+    }
+
+    // Remove Part
+    public function destroy(string $id) {
+        return Part::where('id', $id)->delete();
     }
 }
