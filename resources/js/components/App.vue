@@ -15,7 +15,7 @@
                 <form @submit.prevent="submitCarForm">
                     <div class="mb-3">
                         <label for="name" class="form-label">Názov vozidla</label>
-                        <input v-model="car.name" type="text" id="name" class="form-control" required>
+                        <input v-model="car.name" type="text" id="name" class="form-control" placeholder="Značka vozidla" required>
                     </div>
                     <div class="mb-3 form-check">
                         <input v-model="car.is_registered" :checked="car.is_registered" type="checkbox" id="is_registered" class="form-check-input">
@@ -23,7 +23,7 @@
                     </div>
                     <div class="mb-3" v-if="car.is_registered">
                         <label for="registration_number" class="form-label">Registračné číslo</label>
-                        <input v-model="car.registration_number" type="text" id="registration_number" class="form-control" :required="car.is_registered">
+                        <input v-model="car.registration_number" type="text" id="registration_number" class="form-control" placeholder="Sériové číslo / EČV" :required="car.is_registered">
                     </div>
                     <button type="submit" class="btn btn-success">{{ isEditingCar !== null ? 'Upraviť vozidlo' : 'Pridať vozidlo' }}</button>
                 </form>
@@ -61,11 +61,11 @@
                 <form @submit.prevent="submitPartForm">
                     <div class="mb-3">
                         <label for="name" class="form-label">Názov dielu</label>
-                        <input v-model="part.name" type="text" id="name" class="form-control" required>
+                        <input v-model="part.name" type="text" id="name" class="form-control" placeholder="Značka / typ dielu" required>
                     </div>
                     <div class="mb-3">
                         <label for="serialnumber" class="form-label">Sériové číslo</label>
-                        <input v-model="part.serialnumber" type="text" id="serialnumber" class="form-control" required>
+                        <input v-model="part.serialnumber" type="text" id="serialnumber" class="form-control"  placeholder="Výrobné číslo dielu" required>
                     </div>
                     <div class="mb-3" v-if="isEditingPart === null">
                         <label for="carID" class="form-label">Vozidlo</label>
