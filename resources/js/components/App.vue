@@ -67,9 +67,12 @@
                         <label for="serialnumber" class="form-label">Sériové číslo</label>
                         <input v-model="part.serialnumber" type="text" id="serialnumber" class="form-control" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="carID" class="form-label">ID vozidla</label>
-                        <input v-model="part.car_id" type="text" id="carID" class="form-control" required>
+                    <div class="mb-3" v-if="isEditingPart === null">
+                        <label for="carID" class="form-label">Vozidlo</label>
+                        <select v-model="part.car_id" id="carID" class="form-control" required>
+                            <option value="" :selected="part.car_id === ''" disabled>--Prosím vyberte vozidlo--</option>
+                            <option v-for="car in cars" :value="car.id">{{ car.name }} ({{ car.id }})</option>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-success">{{ isEditingPart !== null ? 'Upraviť diel' : 'Pridať diel' }}</button>
                 </form>
@@ -112,7 +115,7 @@
                 part: {
                     name: '',
                     serialnumber: '',
-                    car_id: null,
+                    car_id: '',
                 },
                 cars: [],
                 parts: [],
@@ -171,6 +174,7 @@
             },
             resetCarForm() {
                 this.car = { name: '', registration_number: '', is_registered: false };
+                this.statusMessage = '';
                 this.isEditingCar = null;
                 this.showCarForm = false;
             },
@@ -213,6 +217,7 @@
             },
             resetPartForm() {
                 this.part = { name: '', serialnumber: '', car_id: null };
+                this.statusMessage = '';
                 this.isEditingPart = null;
                 this.showPartForm = false;
             },

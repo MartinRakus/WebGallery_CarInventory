@@ -15,7 +15,7 @@ class PartController extends Controller {
     public function store(Request $request) {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'serialnumber' => 'required|string|unique:parts,serialnumber|max:255' . $request['id'],
+            'serialnumber' => 'required|string|unique:parts,serialnumber,' . $request['id'] . '|max:255',
             'car_id' => 'required|exists:cars,id'
         ]);
         $part = Part::where('id', $request['id'])->first();

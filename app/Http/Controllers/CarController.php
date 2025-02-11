@@ -15,7 +15,7 @@ class CarController extends Controller {
     public function store(Request $request) {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'registration_number' => 'nullable|required_if:is_registered,true|string|max:255|unique:cars,registration_number,' . $request['id'],
+            'registration_number' => 'nullable|required_if:is_registered,true|string|unique:cars,registration_number,' . $request['id'] . '|max:255',
             'is_registered' => 'boolean'
         ]);
         $car = Car::where('id', $request['id'])->first();
