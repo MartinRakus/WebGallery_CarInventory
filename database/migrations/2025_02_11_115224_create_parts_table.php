@@ -12,7 +12,7 @@ return new class extends Migration {
         Schema::create('parts', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('registration_number');
+            $table->string('serialnumber');
             $table->foreignId('car_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
