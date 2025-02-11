@@ -188,6 +188,7 @@
                     axios.delete(`/cars/${val.id}`)
                         .then(() => {
                             this.fetchCars();
+                            this.fetchParts();
                         })
                         .catch(error => {
                             console.error(error);
