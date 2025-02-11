@@ -1,6 +1,11 @@
 <template>
     <div class="container mt-4">
-        <h1 class="mb-4">Car Inventory</h1>
+        <div class="mb-2 d-flex justify-content-between align-items-center">
+            <h1>Car Inventory</h1>
+            <div class="form-check">
+                <input @input="searchItem()" v-model="search" type="text" id="searchBar" class="form-control" placeholder="Hľadať">
+            </div>
+        </div>
 
         <!-- Cars and Parts Lists -->
         <div class="mt-5">
@@ -35,7 +40,7 @@
                     <span>Názov</span>
                     <span>Registračné číslo</span>
                 </li>
-                <li v-if="cars.length" v-for="car in cars" :key="car.id" class="list-group-item d-flex justify-content-between align-items-center selectable" :class="{ 'bg-secondary text-white': selectedCars.includes(car.id) }" @click="selectCar(car)">
+                <li v-if="filteredCars.length" v-for="car in filteredCars" :key="car.id" class="list-group-item d-flex justify-content-between align-items-center selectable" :class="{ 'bg-secondary text-white': selectedCars.includes(car.id) }" @click="selectCar(car)">
                     <span>{{ car.name }}</span>
                     <div class="d-flex justify-content-between align-items-center">
                         <span v-if="car.registration_number && car.is_registered" class="badge bg-success">{{ car.registration_number }}</span>
@@ -44,7 +49,7 @@
                         <i class="fa fa-times btn btn-danger" @click.stop="removeCar(car)"></i>
                     </div>
                 </li>
-                <li v-if="!cars.length" class="list-group-item d-flex justify-content-center align-items-center">
+                <li v-else class="list-group-item d-flex justify-content-center align-items-center">
                     <span class="text-danger">Žiadne vozidlá neboli nájdené</span>
                 </li>
             </ul>
@@ -92,7 +97,7 @@
                         <i class="fa fa-times btn btn-danger" @click.stop="removePart(part)"></i>
                     </div>
                 </li>
-                <li v-if="!filteredParts.length" class="list-group-item d-flex justify-content-center align-items-center">
+                <li v-else class="list-group-item d-flex justify-content-center align-items-center">
                     <span class="text-danger">Žiadne diely neboli nájdené</span>
                 </li>
             </ul>
@@ -121,11 +126,25 @@
                 parts: [],
                 selectedCars: [],
                 statusMessage: '',
+                search: '',
             };
         },
         computed: {
+            filteredCars() {
+                if (!this.search.trim()) return this.cars;
+                return this.cars.filter(car =>
+                    car.name.toLowerCase().includes(this.search.toLowerCase()) ||
+                    (car.registration_number && car.registration_number.toLowerCase().includes(this.search.toLowerCase()))
+                );
+            },
             filteredParts() {
-                return this.selectedCars.length ? this.parts.filter(part => this.selectedCars.includes(part.car_id)) : this.parts;
+                if (!this.search.trim()) return this.parts;
+                return this.parts.filter(part =>
+                    part.name.toLowerCase().includes(this.search.toLowerCase()) ||
+                    part.serialnumber.toLowerCase().includes(this.search.toLowerCase()) ||
+                    this.getCarName(part.car_id).toLowerCase().includes(this.search.toLowerCase()) ||
+                    part.car_id.toString().includes(this.search.trim())
+                );
             }
         },
         methods: {
@@ -250,6 +269,14 @@
                 this.resetCarForm();
                 this.resetPartForm();
                 this.selectedCars = [];
+            },
+            // Search items
+            searchItem() {
+                if (!this.search.trim()) {
+                    this.filteredCars = this.cars;
+                    this.filteredParts = this.parts;
+                    return;
+                }
             }
         },
         mounted() {
