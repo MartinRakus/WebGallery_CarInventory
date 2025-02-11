@@ -167,16 +167,15 @@
                 this.showCarForm = true;
             },
             resetCarForm() {
-                this.car = { id: null, name: '', registration_number: '', is_registered: false };
+                this.car = { name: '', registration_number: '', is_registered: false };
                 this.isEditingCar = null;
                 this.showCarForm = false;
             },
             submitCarForm() {
                 axios.post('/cars', this.car)
                     .then(response => {
-                        this.cars.push(response.data);
-                        this.car = { name: '', registration_number: '', is_registered: false };
-                        this.showCarForm = false;
+                        this.fetchCars();
+                        this.resetCarForm();
                     })
                     .catch(error => {
                         console.error(error);
@@ -215,9 +214,8 @@
             submitPartForm() {
                 axios.post('/parts', this.part)
                     .then(response => {
-                        this.parts.push(response.data);
-                        this.part = { name: '', serialnumber: '', car_id: null };
-                        this.showPartForm = false;
+                        this.fetchParts();
+                        this.resetPartForm();
                     })
                     .catch(error => {
                         console.error(error);
@@ -227,6 +225,7 @@
                 const car = this.cars.find(c => c.id === carId);
                 return car ? car.name : 'Unknown Car';
             },
+            // Select car as a filter
             selectCar(car) {
                 const index = this.selectedCars.indexOf(car.id);
                 if (index === -1) {
@@ -235,6 +234,7 @@
                     this.selectedCars.splice(index, 1);
                 }
             },
+            // Clear selection of cars
             clearSelection() {
                 this.resetCarForm();
                 this.resetPartForm();
