@@ -44,9 +44,9 @@
                         <span>Registračné číslo</span>
                     </li>
                     <li v-if="filteredCars.length" v-for="car in filteredCars" :key="car.id" :id="'c' + car.id" class="list-group-item d-flex justify-content-between align-items-center selectable" :class="{ 'bg-secondary text-white': selectedCars.includes(car.id) }" @click="selectCar(car)">
-                        <span>{{ car.name }}</span>
+                        <span class="first pr-2">{{ car.name }}</span>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span v-if="car.registration_number && car.is_registered" class="badge bg-success">{{ car.registration_number }}</span>
+                            <span v-if="car.registration_number && car.is_registered" class="badge bg-success second">{{ car.registration_number }}</span>
                             <span v-else class="badge bg-danger">Neregistrované</span>
                             <i class="fa fa fa-pencil-square-o btn btn-success ml-5 mr-2" @click.stop="editCar(car)"></i>
                             <i class="fa fa-times btn btn-danger" @click.stop="removeCar(car)"></i>
@@ -95,9 +95,9 @@
                         <span>Priradené k vozidlu <span class="text-success">(ID)</span></span>
                     </li>
                     <li v-if="filteredParts.length" v-for="part in filteredParts" :key="part.id" :id="'p' + part.id" class="list-group-item d-flex justify-content-between align-items-center">
-                        <span>{{ part.name }} <span class="text-success">({{ part.serialnumber }})</span></span>
+                        <span class="first pr-2">{{ part.name }} <span class="text-success">({{ part.serialnumber }})</span></span>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span>{{ getCarName(part.car_id) }} <span class="text-success">({{ part.car_id }})</span></span>
+                            <span class="second">{{ getCarName(part.car_id) }} <span class="text-success">({{ part.car_id }})</span></span>
                             <i class="fa fa fa-pencil-square-o btn btn-success ml-5 mr-2" @click.stop="editPart(part)"></i>
                             <i class="fa fa-times btn btn-danger" @click.stop="removePart(part)"></i>
                         </div>
@@ -284,6 +284,19 @@
   @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
 </style>
 <style scoped>
+    .first {
+        word-break: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
+    }
+
+    .second {
+        line-height: normal;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
+    }
+
     .columns-container {
         display: flex;
         gap: 25px;
