@@ -23,10 +23,11 @@
                     </div>
                     <div class="mb-3" v-if="car.is_registered">
                         <label for="registration_number" class="form-label">Registračné číslo</label>
-                        <input v-model="car.registration_number" type="text" id="registration_number" class="form-control">
+                        <input v-model="car.registration_number" type="text" id="registration_number" class="form-control" :required="car.is_registered">
                     </div>
                     <button type="submit" class="btn btn-success">{{ isEditingCar !== null ? 'Upraviť vozidlo' : 'Pridať vozidlo' }}</button>
                 </form>
+                <div v-if="statusMessage" class="mt-3 alert alert-danger">{{ statusMessage }}</div>
             </div>
 
             <ul class="list-group mb-4" @click.stop>
@@ -72,6 +73,7 @@
                     </div>
                     <button type="submit" class="btn btn-success">{{ isEditingPart !== null ? 'Upraviť diel' : 'Pridať diel' }}</button>
                 </form>
+                <div v-if="statusMessage" class="mt-3 alert alert-danger">{{ statusMessage }}</div>
             </div>
 
             <ul class="list-group mb-4">
@@ -115,6 +117,7 @@
                 cars: [],
                 parts: [],
                 selectedCars: [],
+                statusMessage: '',
             };
         },
         computed: {
@@ -158,6 +161,7 @@
                         })
                         .catch(error => {
                             console.error(error);
+                            this.statusMessage = 'Chyba pri mazaní vozidla. Skontrolujte prosím zadané údaje.';
                         });
                 }
             },
@@ -171,6 +175,7 @@
                 this.showCarForm = false;
             },
             submitCarForm() {
+                this.car.registration_number = this.car.is_registered ? this.car.registration_number : '';
                 axios.post('/cars', this.car)
                     .then(response => {
                         this.fetchCars();
@@ -178,6 +183,7 @@
                     })
                     .catch(error => {
                         console.error(error);
+                        this.statusMessage = 'Chyba pri ukladaní vozidla. Skontrolujte prosím zadané údaje.';
                     });
             },
             editPart(part) {
@@ -197,6 +203,7 @@
                         })
                         .catch(error => {
                             console.error(error);
+                            this.statusMessage = 'Chyba pri mazaní dielu. Skontrolujte prosím zadané údaje.';
                         });
                 }
             },
@@ -217,6 +224,7 @@
                     })
                     .catch(error => {
                         console.error(error);
+                        this.statusMessage = 'Chyba pri ukladaní dielu. Skontrolujte prosím zadané údaje.';
                     });
             },
             getCarName(carId) {
