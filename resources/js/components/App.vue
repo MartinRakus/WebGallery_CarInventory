@@ -1,23 +1,26 @@
 <template>
     <div class="mt-4 ml-6 mr-6">
-        <div class="mb-2 d-flex justify-content-between align-items-center">
+        <!-- Nav bar -->
+        <nav class="mb-2 d-flex justify-content-between align-items-center">
             <h1>Car Inventory</h1>
             <div class="form-check">
                 <input v-model="search" type="text" id="searchBar" class="form-control" placeholder="Hľadať">
             </div>
-        </div>
+        </nav>
+        <!-- ! Nav bar -->
 
         <hr>
 
         <!-- Cars and Parts Lists -->
         <div id="container" class="mt-4 columns-container">
+            <!-- CARS -->
             <div class="flex-grow-1 mx-2">
                 <div class="mb-2 d-flex justify-content-between align-items-center">
                     <h2 class="mb-0">Dostupné vozidlá</h2>
                     <button class="btn btn-primary" @click.stop="showCarForm || isEditingCar !== null ? resetCarForm() : showCarForm = true">{{showCarForm || isEditingCar !== null ? 'Zatvoriť' : 'Pridať'}}</button>
                 </div>
 
-                <!-- CARS -->
+                <!-- Add / edit form -->
                 <div class="card p-4" v-if="showCarForm || isEditingCar !== null">
                     <h3>{{ isEditingCar !== null ? 'Upraviť vozidlo' : 'Pridať vozidlo' }}</h3>
                     <form @submit.prevent="submitCarForm">
@@ -37,7 +40,9 @@
                     </form>
                     <div v-if="statusMessage" class="mt-3 alert alert-danger">{{ statusMessage }}</div>
                 </div>
+                <!-- ! Add / edit form -->
 
+                <!-- Cars list -->
                 <ul class="list-group mb-4" @click.stop>
                     <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
                         <span>Názov</span>
@@ -56,7 +61,9 @@
                         <span class="text-danger">Žiadne vozidlá neboli nájdené</span>
                     </li>
                 </ul>
+                <!-- ! Cars list -->
             </div>
+            <!-- ! CARS -->
 
             <!-- PARTS -->
             <div class="flex-grow-1 mx-2">
@@ -65,7 +72,7 @@
                     <button class="btn btn-primary" @click.stop="showPartForm || isEditingPart !== null ? resetPartForm() : showPartForm = true">{{ showPartForm || isEditingPart !== null ? 'Zatvoriť' : 'Pridať' }}</button>
                 </div>
 
-                <!-- Add part form -->
+                <!-- Add / edit form -->
                 <div class="card p-4" v-if="showPartForm || isEditingPart !== null">
                     <h3>{{ isEditingPart !== null ? 'Upraviť diel' : 'Pridať diel' }}</h3>
                     <form @submit.prevent="submitPartForm">
@@ -88,7 +95,9 @@
                     </form>
                     <div v-if="statusMessage" class="mt-3 alert alert-danger">{{ statusMessage }}</div>
                 </div>
+                <!-- ! Add / edit form -->
 
+                <!-- Parts list -->
                 <ul class="list-group overflow-auto mb-4">
                     <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
                         <span>Názov <span class="text-success">(Sériové číslo)</span></span>
@@ -106,13 +115,16 @@
                         <span class="text-danger">Žiadne diely neboli nájdené</span>
                     </li>
                 </ul>
+                <!-- ! Parts list -->
             </div>
+            <!-- ! PARTS -->
         </div>
+        <!-- ! Cars and Parts Lists -->
     </div>
 </template>
 <script>
     export default {
-        data() {
+        data() { // Data init
             return {
                 showCarForm: false,
                 isEditingCar: null,
@@ -136,14 +148,14 @@
             };
         },
         computed: {
-            filteredCars() {
+            filteredCars() { // Filter cars using search bar
                 if (!this.search.trim()) return this.cars;
                 return this.cars.filter(car =>
                     car.name.toLowerCase().includes(this.search.toLowerCase()) ||
                     (car.registration_number && car.registration_number.toLowerCase().includes(this.search.toLowerCase()))
                 );
             },
-            filteredParts() {
+            filteredParts() { // Filter parts using search bar or car select
                 if (!this.search.trim() && this.selectedCars.length === 0) return this.parts;
 
                 return this.parts.filter(part =>
@@ -155,8 +167,8 @@
                 );
             }
         },
-        methods: {
-            fetchCars() {
+        methods: { // Functions
+            fetchCars() { // Fetch cars list
                 axios.get('/cars')
                     .then(response => {
                         this.cars = response.data;
@@ -165,7 +177,7 @@
                         console.error(error);
                     });
             },
-            fetchParts() {
+            fetchParts() { // Fetch parts list
                 axios.get('/parts')
                     .then(response => {
                         this.parts = response.data;
@@ -174,7 +186,7 @@
                         console.error(error);
                     });
             },
-            editCar(car) {
+            editCar(car) { // Set values for car editing
                 if (this.isEditingCar === car) {
                     this.resetCarForm();
                 } else {
@@ -183,7 +195,7 @@
                     this.showCarForm = true;
                 }
             },
-            removeCar(val) {
+            removeCar(val) { // Send remove car request
                 if (confirm(`Are you sure you want to delete ${val.name}?`)) {
                     axios.delete(`/cars/${val.id}`)
                         .then(() => {
@@ -196,17 +208,17 @@
                         });
                 }
             },
-            openCarForm() {
+            openCarForm() { // Handle car form opening
                 this.resetCarForm();
                 this.showCarForm = true;
             },
-            resetCarForm() {
+            resetCarForm() { // Reset car form values on close
                 this.car = { name: '', registration_number: '', is_registered: false };
                 this.statusMessage = '';
                 this.isEditingCar = null;
                 this.showCarForm = false;
             },
-            submitCarForm() {
+            submitCarForm() { // Send add / edit car form
                 this.car.registration_number = this.car.is_registered ? this.car.registration_number : '';
                 axios.post('/cars', this.car)
                     .then(response => {
@@ -218,7 +230,7 @@
                         this.statusMessage = 'Chyba pri ukladaní vozidla. Skontrolujte prosím zadané údaje.';
                     });
             },
-            editPart(part) {
+            editPart(part) { // Set values for part editing
                 if (this.isEditingPart === part) {
                     this.resetPartForm();
                 } else {
@@ -227,7 +239,7 @@
                     this.showPartForm = true;
                 }
             },
-            removePart(val) {
+            removePart(val) { // Send remove part request
                 if (confirm(`Are you sure you want to delete ${val.name}?`)) {
                     axios.delete(`/parts/${val.id}`)
                         .then(() => {
@@ -239,17 +251,17 @@
                         });
                 }
             },
-            openPartForm() {
+            openPartForm() { // Handle part form opening
                 this.resetPartForm();
                 this.showPartForm = true;
             },
-            resetPartForm() {
+            resetPartForm() { // Reset part form values on close
                 this.part = { name: '', serialnumber: '', car_id: '' };
                 this.statusMessage = '';
                 this.isEditingPart = null;
                 this.showPartForm = false;
             },
-            submitPartForm() {
+            submitPartForm() { // Send add / edit part form
                 axios.post('/parts', this.part)
                     .then(response => {
                         this.fetchParts();
@@ -260,12 +272,11 @@
                         this.statusMessage = 'Chyba pri ukladaní dielu. Skontrolujte prosím zadané údaje.';
                     });
             },
-            getCarName(carId) {
+            getCarName(carId) { // Get car name using its ID
                 const car = this.cars.find(c => c.id === carId);
                 return car ? car.name : 'Unknown Car';
             },
-            // Select car as a filter
-            selectCar(car) {
+            selectCar(car) { // Select car as a filter
                 const index = this.selectedCars.indexOf(car.id);
                 if (index === -1) {
                     this.selectedCars.push(car.id);

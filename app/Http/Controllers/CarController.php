@@ -17,14 +17,14 @@ class CarController extends Controller {
             'name' => 'required|string|max:255',
             'registration_number' => 'nullable|required_if:is_registered,true|string|unique:cars,registration_number,' . $request['id'] . '|max:255',
             'is_registered' => 'boolean'
-        ]);
-        $car = Car::where('id', $request['id'])->first();
+        ]); // validate received data
 
+        $car = Car::where('id', $request['id'])->first(); // search for car in DB
         if ($car) {
             return $car->update($validated);
         } else {
             return Car::create($validated);
-        }
+        } // update if exists, create if not
     }
 
     // Remove Car

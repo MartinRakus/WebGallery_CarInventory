@@ -17,14 +17,14 @@ class PartController extends Controller {
             'name' => 'required|string|max:255',
             'serialnumber' => 'required|string|unique:parts,serialnumber,' . $request['id'] . '|max:255',
             'car_id' => 'required|exists:cars,id'
-        ]);
-        $part = Part::where('id', $request['id'])->first();
+        ]); // validate received data
 
+        $part = Part::where('id', $request['id'])->first(); // search for part in DB
         if ($part) {
             return $part->update($validated);
         } else {
             return Part::create($validated);
-        }
+        } // update if exists, create if not
     }
 
     // Remove Part
