@@ -220,6 +220,11 @@
                 this.showCarForm = false;
             },
             submitCarForm() { // Send add / edit car form
+                if (this.cars.some(car => car.id !== this.car.id && car.registration_number === this.car.registration_number)) {
+                    this.statusMessage = 'Duplicitné registračné číslo, prosím zadajte iný údaj.';
+                    return;
+                }
+
                 this.car.registration_number = this.car.is_registered ? this.car.registration_number : '';
                 axios.post('/cars', this.car)
                     .then(response => {
@@ -263,6 +268,11 @@
                 this.showPartForm = false;
             },
             submitPartForm() { // Send add / edit part form
+                if (this.parts.some(part => part.id !== this.part.id && part.serialnumber === this.part.serialnumber)) {
+                    this.statusMessage = 'Duplicitné sériové číslo, prosím zadajte iný údaj.';
+                    return;
+                }
+
                 axios.post('/parts', this.part)
                     .then(response => {
                         this.fetchParts();
