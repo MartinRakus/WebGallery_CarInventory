@@ -200,6 +200,8 @@
                 if (confirm(`Are you sure you want to delete ${val.name}?`)) {
                     axios.delete(`/cars/${val.id}`)
                         .then(() => {
+                            this.selectedCars = [];
+                            this.search = '';
                             this.fetchCars();
                             this.fetchParts();
                         })
@@ -275,6 +277,8 @@
 
                 axios.post('/parts', this.part)
                     .then(response => {
+                        this.selectedCars = [];
+                        this.search = '';
                         this.fetchParts();
                         this.resetPartForm();
                     })
