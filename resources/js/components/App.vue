@@ -37,7 +37,7 @@
                             <label for="registration_number" class="form-label">Registračné číslo</label>
                             <input v-model="car.registration_number" type="text" id="registration_number" class="form-control" placeholder="Sériové číslo / EČV" :required="car.is_registered">
                         </div>
-                        <button type="submit" class="btn btn-success">{{ isEditingCar !== null ? 'Upraviť vozidlo' : 'Pridať vozidlo' }}</button>
+                        <button type="submit" class="btn btn-success" :disabled="isCarSubmitting">{{ isEditingCar !== null ? 'Upraviť vozidlo' : 'Pridať vozidlo' }}</button>
                     </form>
                     <div v-if="statusMessage" class="mt-3 alert alert-danger">{{ statusMessage }}</div>
                 </div>
@@ -92,7 +92,7 @@
                                 <option v-for="car in cars" :value="car.id">{{ car.name }} ({{ car.id }})</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-success">{{ isEditingPart !== null ? 'Upraviť diel' : 'Pridať diel' }}</button>
+                        <button type="submit" class="btn btn-success" :disabled="isPartSubmitting">{{ isEditingPart !== null ? 'Upraviť diel' : 'Pridať diel' }}</button>
                     </form>
                     <div v-if="statusMessage" class="mt-3 alert alert-danger">{{ statusMessage }}</div>
                 </div>
@@ -127,6 +127,8 @@
     export default {
         data() { // Data init
             return {
+                isCarSubmitting: false,
+                isPartSubmitting: false,
                 showCarForm: false,
                 isEditingCar: null,
                 showPartForm: false,
@@ -222,8 +224,12 @@
                 this.showCarForm = false;
             },
             submitCarForm() { // Send add / edit car form
+                if (this.isCarSubmitting) return;
+                this.isCarSubmitting = true;
+
                 if (this.cars.some(car => car.is_registered && car.id !== this.car.id && car.registration_number === this.car.registration_number)) {
                     this.statusMessage = 'Duplicitné registračné číslo, prosím zadajte iný údaj.';
+                    this.isCarSubmitting = false;
                     return;
                 } // Check for duplicate values
 
@@ -236,6 +242,9 @@
                     .catch(error => {
                         console.error(error);
                         this.statusMessage = 'Chyba pri ukladaní vozidla. Skontrolujte prosím zadané údaje.';
+                    })
+                    .finally(() => {
+                        this.isCarSubmitting = false;
                     });
             },
             editPart(part) { // Set values for part editing
@@ -270,8 +279,12 @@
                 this.showPartForm = false;
             },
             submitPartForm() { // Send add / edit part form
+                if (this.isPartSubmitting) return;
+                this.isPartSubmitting = true;
+
                 if (this.parts.some(part => part.id !== this.part.id && part.serialnumber === this.part.serialnumber)) {
                     this.statusMessage = 'Duplicitné sériové číslo, prosím zadajte iný údaj.';
+                    this.isPartSubmitting = false;
                     return;
                 } // Check for duplicate values
 
@@ -285,6 +298,9 @@
                     .catch(error => {
                         console.error(error);
                         this.statusMessage = 'Chyba pri ukladaní dielu. Skontrolujte prosím zadané údaje.';
+                    })
+                    .finally(() => {
+                        this.isPartSubmitting = false;
                     });
             },
             getCarName(carId) { // Get car name using its ID
