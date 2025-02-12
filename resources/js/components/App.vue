@@ -223,7 +223,7 @@
                 if (this.cars.some(car => car.id !== this.car.id && car.registration_number === this.car.registration_number)) {
                     this.statusMessage = 'Duplicitné registračné číslo, prosím zadajte iný údaj.';
                     return;
-                }
+                } // Check for duplicate values
 
                 this.car.registration_number = this.car.is_registered ? this.car.registration_number : '';
                 axios.post('/cars', this.car)
@@ -271,7 +271,7 @@
                 if (this.parts.some(part => part.id !== this.part.id && part.serialnumber === this.part.serialnumber)) {
                     this.statusMessage = 'Duplicitné sériové číslo, prosím zadajte iný údaj.';
                     return;
-                }
+                } // Check for duplicate values
 
                 axios.post('/parts', this.part)
                     .then(response => {
