@@ -220,7 +220,7 @@
                 this.showCarForm = false;
             },
             submitCarForm() { // Send add / edit car form
-                if (this.cars.some(car => car.id !== this.car.id && car.registration_number === this.car.registration_number)) {
+                if (this.cars.some(car => car.is_registered && car.id !== this.car.id && car.registration_number === this.car.registration_number)) {
                     this.statusMessage = 'Duplicitné registračné číslo, prosím zadajte iný údaj.';
                     return;
                 } // Check for duplicate values
