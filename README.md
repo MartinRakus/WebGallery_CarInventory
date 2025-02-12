@@ -3,7 +3,7 @@
 Webová aplikácia na správu vozidiel a dielov, vytvorená pomocou Laravelu na backende a Vue.js na fronte. Na dizajn je použitý Bootstrap a ako databáza sa využíva MySQL.
 
 
-https://github.com/user-attachments/assets/5c954abd-f600-4776-94c7-c66172bcd8a9
+[Demo video](https://github.com/MartinRakus/WebGallery_CarInventory/blob/9ff210bb9a50036936f3048dc4aac3f9259d0f3d/video.mp4)
 
 
 ## 📚 Popis projektu
