@@ -2,6 +2,10 @@
 # Car and Part Management System
 Webová aplikácia na správu vozidiel a dielov, vytvorená pomocou Laravelu na backende a Vue.js na fronte. Na dizajn je použitý Bootstrap a ako databáza sa využíva MySQL.
 
+
+https://github.com/user-attachments/assets/5c954abd-f600-4776-94c7-c66172bcd8a9
+
+
 ## 📚 Popis projektu
 Aplikácia umožňuje:
 - Zobrazenie zoznamu vozidiel a dielov
@@ -71,20 +75,20 @@ php artisan serve
 
 ## 🔑 Funkcionality
 -  **CRUD operácie**:
-- Vytváranie, čítanie, úprava a mazanie vozidiel a dielov
+    - Vytváranie, čítanie, úprava a mazanie vozidiel a dielov
 
 ###
 -  **Validácia formulárov**:
--  `name`, `serialnumber` sú povinné
--  `registration_number` je povinné len ak `is_registered` je `true`
--  `serialnumber` a `registration_number` nesmú byť duplicitné (doplnkové obmedzenie)
+    -  `name`, `serialnumber` sú povinné
+    -  `registration_number` je povinné len ak `is_registered` je `true`
+    -  `serialnumber` a `registration_number` nesmú byť duplicitné (doplnkové obmedzenie)
 
 ###
 -  **Väzby medzi modelmi**:
-- Jedno vozidlo môže mať viacero dielov
-- Jeden diel patrí len k jednému vozidlu
+    - Jedno vozidlo môže mať viacero dielov
+    - Jeden diel patrí len k jednému vozidlu
 
 ###
 -  **Filtrovanie**:
-- Možnosť filtrovať zoznam vozidiel a dielov podľa textu (názov, sériové číslo, registračné číslo)
-- Možnosť filtrovať zoznam dielov podľa výberu vozidiel v tabuľke vozidiel
+    - Možnosť filtrovať zoznam vozidiel a dielov podľa textu (názov, sériové číslo, registračné číslo)
+    - Možnosť filtrovať zoznam dielov podľa výberu vozidiel v tabuľke vozidiel
