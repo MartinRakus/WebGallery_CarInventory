@@ -3,8 +3,9 @@
         <!-- Nav bar -->
         <nav class="mb-2 d-flex justify-content-between align-items-center">
             <h1>Car Inventory</h1>
-            <div class="form-check">
-                <input v-model="search" type="text" id="searchBar" class="form-control" placeholder="Hľadať">
+            <div class="form-check d-flex align-items-center">
+                <input v-model="search" type="text" id="searchBar" class="form-control mr-4" placeholder="Hľadať">
+                <i class="fa fa-refresh btn btn-primary p-2" @click.stop="fetchCars(); fetchParts()"></i>
             </div>
         </nav>
         <!-- ! Nav bar -->
